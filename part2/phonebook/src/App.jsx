@@ -23,8 +23,23 @@ const App = () => {
     event.preventDefault()
 
     // compare names, not objects: two different objects are never equal
-    if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+    const existingPerson = persons.find(person => person.name === newName)
+
+    if (existingPerson) {
+      const message = `${newName} is already added to phonebook, replace the old number with a new one?`
+      if (!window.confirm(message)) {
+        return
+      }
+
+      const changedPerson = { ...existingPerson, number: newNumber }
+
+      personService
+        .update(existingPerson.id, changedPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(p => p.id === existingPerson.id ? returnedPerson : p))
+          setNewName('')
+          setNewNumber('')
+        })
       return
     }
 
