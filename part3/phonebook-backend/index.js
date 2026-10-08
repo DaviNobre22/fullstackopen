@@ -66,11 +66,6 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
-// random id between 0 and 999 999 999, so duplicates are very unlikely
-const generateId = () => {
-  return String(Math.floor(Math.random() * 1000000000))
-}
-
 app.post('/api/persons', (request, response) => {
   // request.body is undefined if the request had no JSON body
   const body = request.body || {}
@@ -81,21 +76,15 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  if (persons.some(person => person.name === body.name)) {
-    return response.status(400).json({
-      error: 'name must be unique'
-    })
-  }
-
-  const person = {
-    id: generateId(),
+  // MongoDB creates the id when the person is saved
+  const person = new Person({
     name: body.name,
-    number: body.number
-  }
+    number: body.number,
+  })
 
-  persons = persons.concat(person)
-
-  response.json(person)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 app.get('/info', (request, response) => {
