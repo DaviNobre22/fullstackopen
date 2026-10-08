@@ -1,0 +1,16 @@
+### missing number
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Grace Hopper"
+}
+
+### name already in the phonebook
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Arto Hellas",
+  "number": "040-999999"
+}
