@@ -100,6 +100,10 @@ app.get('/info', (request, response) => {
 })
 
 const PORT = 3001
-app.listen(PORT, () => {
+// in Express 5 a failed start (e.g. port already in use) is passed to this callback
+app.listen(PORT, (error) => {
+  if (error) {
+    throw error
+  }
   console.log(`Server running on port ${PORT}`)
 })
