@@ -11,3 +11,14 @@ Content-Type: application/json
   "url": "https://reactpatterns.com/",
   "likes": 7
 }
+
+### like a blog (replace the id with one from GET /api/blogs)
+PUT http://localhost:3003/api/blogs/5a422a851b54a676234d17f7
+Content-Type: application/json
+
+{
+  "likes": 8
+}
+
+### delete a blog (replace the id with one from GET /api/blogs)
+DELETE http://localhost:3003/api/blogs/5a422a851b54a676234d17f7

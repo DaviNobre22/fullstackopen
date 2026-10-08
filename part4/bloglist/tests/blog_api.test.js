@@ -99,6 +99,75 @@ describe('adding a blog', () => {
   })
 })
 
+describe('deleting a blog', () => {
+  test('succeeds with status 204 if the id is valid', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+
+    const ids = blogsAtEnd.map((blog) => blog.id)
+    assert(!ids.includes(blogToDelete.id))
+  })
+
+  test('fails with status 400 if the id is malformatted', async () => {
+    await api.delete('/api/blogs/12345').expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
+})
+
+describe('updating a blog', () => {
+  test('succeeds in changing the number of likes', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const response = await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send({ ...blogToUpdate, likes: blogToUpdate.likes + 1 })
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(response.body.likes, blogToUpdate.likes + 1)
+
+    const updatedInDb = (await helper.blogsInDb()).find((blog) => blog.id === blogToUpdate.id)
+    assert.deepStrictEqual(updatedInDb, { ...blogToUpdate, likes: blogToUpdate.likes + 1 })
+  })
+
+  test('with only likes keeps the other fields', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[1]
+
+    await api.put(`/api/blogs/${blogToUpdate.id}`).send({ likes: 42 }).expect(200)
+
+    const updatedInDb = (await helper.blogsInDb()).find((blog) => blog.id === blogToUpdate.id)
+    assert.deepStrictEqual(updatedInDb, { ...blogToUpdate, likes: 42 })
+  })
+
+  test('fails with status 404 if the blog does not exist', async () => {
+    const validNonexistingId = await helper.nonExistingId()
+
+    await api.put(`/api/blogs/${validNonexistingId}`).send({ likes: 1 }).expect(404)
+  })
+
+  test('fails with status 400 if the id is malformatted', async () => {
+    await api.put('/api/blogs/12345').send({ likes: 1 }).expect(400)
+  })
+
+  test('fails with status 400 if the title is made empty', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    await api.put(`/api/blogs/${blogsAtStart[0].id}`).send({ title: '' }).expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.deepStrictEqual(blogsAtEnd, blogsAtStart)
+  })
+})
+
 after(async () => {
   await mongoose.connection.close()
 })

@@ -17,4 +17,29 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
+blogsRouter.delete('/:id', async (request, response) => {
+  // an invalid id makes this throw a CastError -> 400
+  await Blog.findByIdAndDelete(request.params.id)
+  response.status(204).end()
+})
+
+blogsRouter.put('/:id', async (request, response) => {
+  const { title, author, url, likes } = request.body || {}
+
+  const blog = await Blog.findById(request.params.id)
+  if (!blog) {
+    return response.status(404).end()
+  }
+
+  // only the fields that were sent are changed, e.g. just { likes: 8 }
+  if (title !== undefined) blog.title = title
+  if (author !== undefined) blog.author = author
+  if (url !== undefined) blog.url = url
+  if (likes !== undefined) blog.likes = likes
+
+  // save() runs the schema validators, so e.g. an empty title is rejected with 400
+  const updatedBlog = await blog.save()
+  response.json(updatedBlog)
+})
+
 module.exports = blogsRouter
