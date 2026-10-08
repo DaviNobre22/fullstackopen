@@ -1,0 +1,16 @@
+# replace YOUR-APP-NAME with your Render app name
+
+### all persons
+GET https://YOUR-APP-NAME.onrender.com/api/persons
+
+### info page
+GET https://YOUR-APP-NAME.onrender.com/info
+
+### add a person
+POST https://YOUR-APP-NAME.onrender.com/api/persons
+Content-Type: application/json
+
+{
+  "name": "Grace Hopper",
+  "number": "555-0100"
+}

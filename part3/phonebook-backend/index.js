@@ -99,7 +99,8 @@ app.get('/info', (request, response) => {
   `)
 })
 
-const PORT = 3001
+// hosting services like Render tell the app which port to use through PORT
+const PORT = process.env.PORT || 3001
 // in Express 5 a failed start (e.g. port already in use) is passed to this callback
 app.listen(PORT, (error) => {
   if (error) {
