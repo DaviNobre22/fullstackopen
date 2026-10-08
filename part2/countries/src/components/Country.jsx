@@ -1,8 +1,11 @@
+import Weather from './Weather'
+
 const Country = (props) => {
   const country = props.country
   // a few countries (e.g. Antarctica) have no capital or languages
   const capital = country.capital ? country.capital.join(', ') : 'none'
   const languages = country.languages ? Object.values(country.languages) : []
+  const capitalLatlng = country.capitalInfo && country.capitalInfo.latlng
 
   return (
     <div>
@@ -18,6 +21,10 @@ const Country = (props) => {
       </ul>
 
       <img src={country.flags.png} alt={country.flags.alt} width="200" />
+
+      {country.capital && capitalLatlng &&
+        <Weather capital={country.capital[0]} latlng={capitalLatlng} />
+      }
     </div>
   )
 }
