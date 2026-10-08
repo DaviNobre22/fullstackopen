@@ -20,5 +20,6 @@ To rebuild it after changing the frontend, run `npm run build:ui` in `part3/phon
 - `GET /api/persons` returns all people
 - `GET /api/persons/:id` returns one person
 - `POST /api/persons` adds a person
+- `PUT /api/persons/:id` changes a person's number
 - `DELETE /api/persons/:id` deletes a person
 - `GET /info` shows how many people are in the phonebook

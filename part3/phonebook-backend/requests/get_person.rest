@@ -1,0 +1,10 @@
+# replace the id with one from GET /api/persons
+
+### one person
+GET http://localhost:3001/api/persons/5c42336b0303b2e44071dc4f
+
+### malformatted id -> 400
+GET http://localhost:3001/api/persons/123
+
+### info page
+GET http://localhost:3001/info
