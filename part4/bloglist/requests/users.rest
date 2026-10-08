@@ -1,0 +1,31 @@
+### all users, with their blogs
+GET http://localhost:3003/api/users
+
+### create a user
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "mluukkai",
+  "name": "Matti Luukkainen",
+  "password": "salainen"
+}
+
+### invalid user: password too short -> 400
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "shortpw",
+  "name": "Short Password",
+  "password": "ab"
+}
+
+### log in: copy the "token" from the response into blogs.rest
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+  "username": "mluukkai",
+  "password": "salainen"
+}

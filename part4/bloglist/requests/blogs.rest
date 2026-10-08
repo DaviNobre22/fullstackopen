@@ -1,15 +1,29 @@
-### all blogs
+# paste the token from the login request in users.rest here
+@token = PASTE_TOKEN_HERE
+
+### all blogs (no token needed)
 GET http://localhost:3003/api/blogs
 
-### add a blog
+### add a blog (needs a token)
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": "React patterns",
   "author": "Michael Chan",
   "url": "https://reactpatterns.com/",
   "likes": 7
+}
+
+### add a blog without a token -> 401
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "No token",
+  "author": "Nobody",
+  "url": "https://example.com/"
 }
 
 ### like a blog (replace the id with one from GET /api/blogs)
@@ -20,5 +34,6 @@ Content-Type: application/json
   "likes": 8
 }
 
-### delete a blog (replace the id with one from GET /api/blogs)
+### delete a blog (only its creator; replace the id)
 DELETE http://localhost:3003/api/blogs/5a422a851b54a676234d17f7
+Authorization: Bearer {{token}}

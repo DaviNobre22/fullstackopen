@@ -7,4 +7,7 @@ const MONGODB_URI = process.env.NODE_ENV === 'test'
 
 const PORT = process.env.PORT || 3003
 
-module.exports = { MONGODB_URI, PORT }
+// used to sign and check login tokens; anyone who knows it could make valid tokens
+const SECRET = process.env.SECRET
+
+module.exports = { MONGODB_URI, PORT, SECRET }
