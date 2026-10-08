@@ -11,4 +11,9 @@ const create = newObject => {
   return request.then(response => response.data)
 }
 
-export default { getAll, create }
+// "delete" is a reserved word, so this is called remove
+const remove = id => {
+  return axios.delete(`${baseUrl}/${id}`)
+}
+
+export default { getAll, create, remove }
