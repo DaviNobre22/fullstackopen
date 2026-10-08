@@ -4,8 +4,14 @@ const app = express()
 
 // parse JSON request bodies into request.body
 app.use(express.json())
-// log every request to the console, e.g. "GET /api/persons 200 223 - 2.513 ms"
-app.use(morgan('tiny'))
+// :body shows the data sent in POST requests, and nothing for other methods
+morgan.token('body', (request) => {
+  return request.method === 'POST' ? JSON.stringify(request.body) : ''
+})
+
+// the "tiny" format plus the body, e.g.
+// POST /api/persons 200 60 - 0.489 ms {"name":"Grace Hopper","number":"555-0100"}
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 let persons = [
   {
