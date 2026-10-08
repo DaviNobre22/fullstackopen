@@ -5,13 +5,17 @@ const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const api = supertest(app)
 
-// every test starts from the same two blogs
+// every test starts from one user and the same two blogs
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
+  await User.deleteMany({})
+
+  const user = await new User({ username: 'root', name: 'Superuser', passwordHash: 'x' }).save()
+  await Blog.insertMany(helper.initialBlogs.map((blog) => ({ ...blog, user: user._id })))
 })
 
 describe('getting blogs', () => {

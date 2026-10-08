@@ -1,19 +1,35 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 // the paths are relative to where the router is used: '/' here is '/api/blogs'
 // Express 5 passes errors from async handlers to the error handler by itself,
 // so no try/catch is needed here
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
+  // replace each blog's user id with that user's username and name
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const blog = new Blog(request.body)
+  const { title, author, url, likes } = request.body || {}
+
+  // for now any user is the creator (exercise 4.17); 4.19 uses the logged-in user
+  const user = await User.findOne({})
+
+  const blog = new Blog({
+    title,
+    author,
+    url,
+    likes,
+    user: user._id,
+  })
 
   // a missing title or url makes save() throw a ValidationError -> 400
   const savedBlog = await blog.save()
+  user.blogs = user.blogs.concat(savedBlog._id)
+  await user.save()
+
   response.status(201).json(savedBlog)
 })
 

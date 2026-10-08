@@ -14,6 +14,11 @@ const blogSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  // the user who added the blog
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
 })
 
 // send "id" as a string, and hide MongoDB's internal _id and __v fields
