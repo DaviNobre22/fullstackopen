@@ -2,9 +2,9 @@
   "name": "bloglist",
   "version": "1.0.0",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch index.js",
-    "test": "node --test"
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development node --watch index.js",
+    "test": "cross-env NODE_ENV=test node --test"
   },
   "keywords": [],
   "author": "",
@@ -17,5 +17,9 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "supertest": "^7.3.1"
   }
 }
