@@ -1,8 +1,11 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 // parse JSON request bodies into request.body
 app.use(express.json())
+// log every request to the console, e.g. "GET /api/persons 200 223 - 2.513 ms"
+app.use(morgan('tiny'))
 
 let persons = [
   {
