@@ -11,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationType, setNotificationType] = useState('success')
 
   // fetch the initial list once, after the first render
   useEffect(() => {
@@ -21,9 +22,10 @@ const App = () => {
       })
   }, [])
 
-  // show a message for 5 seconds
-  const notify = (message) => {
+  // show a message for 5 seconds; type is 'success' or 'error'
+  const notify = (message, type = 'success') => {
     setNotificationMessage(message)
+    setNotificationType(type)
     setTimeout(() => {
       setNotificationMessage(null)
     }, 5000)
@@ -50,6 +52,11 @@ const App = () => {
           setNewName('')
           setNewNumber('')
           notify(`Changed the number of ${returnedPerson.name}`)
+        })
+        .catch(() => {
+          // the person was deleted from the server, e.g. in another browser
+          notify(`Information of ${existingPerson.name} has already been removed from server`, 'error')
+          setPersons(persons.filter(p => p.id !== existingPerson.id))
         })
       return
     }
@@ -80,6 +87,10 @@ const App = () => {
       .then(() => {
         setPersons(persons.filter(p => p.id !== person.id))
       })
+      .catch(() => {
+        notify(`Information of ${person.name} has already been removed from server`, 'error')
+        setPersons(persons.filter(p => p.id !== person.id))
+      })
   }
 
   const handleNameChange = (event) => {
@@ -103,7 +114,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
-      <Notification message={notificationMessage} type="success" />
+      <Notification message={notificationMessage} type={notificationType} />
 
       <Filter value={filter} onChange={handleFilterChange} />
 
