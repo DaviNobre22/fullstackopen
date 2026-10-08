@@ -11,7 +11,11 @@ My solutions to the exercises of the [Full Stack Open](https://fullstackopen.com
 
 ## Phonebook backend (part 3)
 
-Online: **https://YOUR-APP-NAME.onrender.com/api/persons**
+Online app: **https://YOUR-APP-NAME.onrender.com**
+(API: https://YOUR-APP-NAME.onrender.com/api/persons)
+
+The backend also serves the frontend's production build from `part3/phonebook-backend/dist`.
+To rebuild it after changing the frontend, run `npm run build:ui` in `part3/phonebook-backend`.
 
 - `GET /api/persons` returns all people
 - `GET /api/persons/:id` returns one person

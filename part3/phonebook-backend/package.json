@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js"
+    "dev": "node --watch index.js",
+    "build:ui": "npm run build --prefix ../phonebook-frontend"
   },
   "keywords": [],
   "author": "",

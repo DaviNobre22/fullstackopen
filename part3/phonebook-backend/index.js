@@ -2,6 +2,8 @@ const express = require('express')
 const morgan = require('morgan')
 const app = express()
 
+// serve the frontend's production build (index.html, JS, CSS) from the dist folder
+app.use(express.static('dist'))
 // parse JSON request bodies into request.body
 app.use(express.json())
 // :body shows the data sent in POST requests, and nothing for other methods
