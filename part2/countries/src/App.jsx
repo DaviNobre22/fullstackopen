@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import countryService from './services/countries'
 import Countries from './components/Countries'
+import Country from './components/Country'
 
 const App = () => {
   const [countries, setCountries] = useState([])
   const [query, setQuery] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   // fetch all countries once, then filter them in the browser
   useEffect(() => {
@@ -17,6 +19,8 @@ const App = () => {
 
   const handleQueryChange = (event) => {
     setQuery(event.target.value)
+    // typing a new search goes back to the search results
+    setSelectedCountry(null)
   }
 
   // case insensitive: "fin" also matches "Finland"
@@ -29,7 +33,10 @@ const App = () => {
       <div>
         find countries <input value={query} onChange={handleQueryChange} />
       </div>
-      {query && <Countries countries={countriesToShow} />}
+      {selectedCountry
+        ? <Country country={selectedCountry} />
+        : query && <Countries countries={countriesToShow} onShow={setSelectedCountry} />
+      }
     </div>
   )
 }

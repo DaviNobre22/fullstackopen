@@ -14,7 +14,10 @@ const Countries = (props) => {
   return (
     <div>
       {countries.map(country =>
-        <div key={country.cca3}>{country.name.common}</div>
+        <div key={country.cca3}>
+          {country.name.common}{' '}
+          <button onClick={() => props.onShow(country)}>show</button>
+        </div>
       )}
     </div>
   )
