@@ -8,6 +8,13 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
+
+    // compare names, not objects: two different objects are never equal
+    if (persons.some(person => person.name === newName)) {
+      alert(`${newName} is already added to phonebook`)
+      return
+    }
+
     setPersons(persons.concat({ name: newName }))
     setNewName('')
   }
