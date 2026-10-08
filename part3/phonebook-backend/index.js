@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
 
+// parse JSON request bodies into request.body
+app.use(express.json())
+
 let persons = [
   {
     id: '1',
@@ -44,6 +47,25 @@ app.delete('/api/persons/:id', (request, response) => {
   persons = persons.filter(person => person.id !== id)
 
   response.status(204).end()
+})
+
+// random id between 0 and 999 999 999, so duplicates are very unlikely
+const generateId = () => {
+  return String(Math.floor(Math.random() * 1000000000))
+}
+
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+
+  const person = {
+    id: generateId(),
+    name: body.name,
+    number: body.number
+  }
+
+  persons = persons.concat(person)
+
+  response.json(person)
 })
 
 app.get('/info', (request, response) => {
