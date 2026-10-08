@@ -16,8 +16,21 @@ mongoose
   })
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true,
+  },
+  number: {
+    type: String,
+    minLength: 8,
+    required: true,
+    validate: {
+      // two or three digits, a dash, then more digits: 09-1234556, 040-22334455
+      validator: (value) => /^\d{2,3}-\d+$/.test(value),
+      message: (props) => `${props.value} is not a valid phone number`,
+    },
+  },
 })
 
 // send "id" as a string to the frontend, and hide MongoDB's internal _id and __v fields

@@ -31,6 +31,12 @@ const App = () => {
     }, 5000)
   }
 
+  // the backend's explanation, e.g. "Person validation failed: name: ...",
+  // or axios's own message if the backend could not be reached at all
+  const errorMessage = (error) => {
+    return error.response?.data?.error || error.message
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
 
@@ -53,15 +59,20 @@ const App = () => {
           setNewNumber('')
           notify(`Changed the number of ${returnedPerson.name}`)
         })
-        .catch(() => {
-          // the person was deleted from the server, e.g. in another browser
-          notify(`Information of ${existingPerson.name} has already been removed from server`, 'error')
-          setPersons(persons.filter(p => p.id !== existingPerson.id))
+        .catch(error => {
+          if (error.response && error.response.status === 404) {
+            // the person was deleted from the server, e.g. in another browser
+            notify(`Information of ${existingPerson.name} has already been removed from server`, 'error')
+            setPersons(persons.filter(p => p.id !== existingPerson.id))
+          } else {
+            // e.g. a validation error: the backend explains it in error.response.data.error
+            notify(errorMessage(error), 'error')
+          }
         })
       return
     }
 
-    // no id here: json-server generates one
+    // no id here: the backend (MongoDB) generates one
     const personObject = {
       name: newName,
       number: newNumber
@@ -74,6 +85,9 @@ const App = () => {
         setNewName('')
         setNewNumber('')
         notify(`Added ${returnedPerson.name}`)
+      })
+      .catch(error => {
+        notify(errorMessage(error), 'error')
       })
   }
 

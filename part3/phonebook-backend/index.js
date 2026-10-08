@@ -51,12 +51,7 @@ app.post('/api/persons', (request, response, next) => {
   // request.body is undefined if the request had no JSON body
   const body = request.body || {}
 
-  if (!body.name || !body.number) {
-    return response.status(400).json({
-      error: 'name or number missing'
-    })
-  }
-
+  // the schema in models/person.js checks the name and number when saving
   // MongoDB creates the id when the person is saved
   const person = new Person({
     name: body.name,
@@ -83,6 +78,7 @@ app.put('/api/persons/:id', (request, response, next) => {
       person.name = name
       person.number = number
 
+      // save() runs the schema validators, so an invalid number is rejected here too
       return person.save().then(updatedPerson => {
         response.json(updatedPerson)
       })
@@ -117,6 +113,11 @@ const errorHandler = (error, request, response, next) => {
   // an id that is not a valid MongoDB id, e.g. /api/persons/123
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  // the name or number broke a rule in the schema, e.g. a name shorter than 3 characters
+  if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)
