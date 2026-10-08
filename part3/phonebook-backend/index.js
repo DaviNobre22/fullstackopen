@@ -1,5 +1,9 @@
+// load the variables in .env (MONGODB_URI, PORT) before anything reads them
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
+const Person = require('./models/person')
+
 const app = express()
 
 // serve the frontend's production build (index.html, JS, CSS) from the dist folder
@@ -39,7 +43,9 @@ let persons = [
 ]
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
