@@ -2,7 +2,7 @@ name: Query anecdotes tests 2
 
 on:
   push:
-    branches: [xmain]
+    branches: [main]
 
 jobs:
   playwright-tests:

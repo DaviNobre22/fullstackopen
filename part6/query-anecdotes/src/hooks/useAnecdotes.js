@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getAnecdotes, createAnecdote, updateAnecdote } from '../requests'
+import { useNotify } from '../NotificationContext'
 
 // all the TanStack Query details in one place: components only see
 // the anecdotes, the query's status, and functions to add and vote
 export const useAnecdotes = () => {
   const queryClient = useQueryClient()
+  const notify = useNotify()
 
   const result = useQuery({
     queryKey: ['anecdotes'],
@@ -21,6 +23,11 @@ export const useAnecdotes = () => {
       // add the saved anecdote to the cached list, so it shows without a new request
       const anecdotes = queryClient.getQueryData(['anecdotes'])
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
+      notify(`anecdote '${newAnecdote.content}' created`)
+    },
+    // e.g. the server's "too short anecdote, must have length 5 or more"
+    onError: (error) => {
+      notify(error.message)
     },
   })
 
@@ -33,6 +40,10 @@ export const useAnecdotes = () => {
         ['anecdotes'],
         anecdotes.map((a) => (a.id === updatedAnecdote.id ? updatedAnecdote : a))
       )
+      notify(`anecdote '${updatedAnecdote.content}' voted`)
+    },
+    onError: (error) => {
+      notify(`voting failed: ${error.message}`)
     },
   })
 
