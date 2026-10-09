@@ -3,7 +3,8 @@ import anecdoteService from './services/anecdotes'
 
 // the state is never changed in place: each action builds a new array,
 // so Zustand (and React) can see that something changed
-const useAnecdoteStore = create((set, get) => ({
+// exported only so the tests can reset it between tests
+export const useAnecdoteStore = create((set, get) => ({
   // empty until the anecdotes have been fetched from the backend
   anecdotes: [],
   // the text typed in the filter; an empty filter shows every anecdote

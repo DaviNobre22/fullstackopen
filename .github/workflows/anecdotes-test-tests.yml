@@ -2,7 +2,7 @@ name: Anecdotes tests check
 
 on:
   push:
-    branches: [xmain]
+    branches: [main]
 
 jobs:
   unit-tests:
