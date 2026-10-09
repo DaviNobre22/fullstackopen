@@ -99,7 +99,8 @@ describe('adding a blog', () => {
 
     // the logged-in user is the creator, and the blog is in that user's list
     const root = await User.findOne({ username: 'root' })
-    assert.strictEqual(response.body.user, root._id.toString())
+    assert.strictEqual(response.body.user.id, root._id.toString())
+    assert.strictEqual(response.body.user.username, 'root')
     assert(root.blogs.map((id) => id.toString()).includes(response.body.id))
   })
 
@@ -227,6 +228,8 @@ describe('updating a blog', () => {
       .expect('Content-Type', /application\/json/)
 
     assert.strictEqual(response.body.likes, blogToUpdate.likes + 1)
+    // the creator is still included after the update (exercise 5.9)
+    assert.strictEqual(response.body.user.username, 'root')
 
     const updatedInDb = (await helper.blogsInDb()).find((blog) => blog.id === blogToUpdate.id)
     assert.deepStrictEqual(updatedInDb, { ...blogToUpdate, likes: blogToUpdate.likes + 1 })

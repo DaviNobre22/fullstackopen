@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -16,6 +17,8 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState({ message: null, type: 'success' })
   const notificationTimeout = useRef(null)
+  // lets App hide the "create new blog" form after a blog is added
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -73,6 +76,8 @@ const App = () => {
     try {
       const returnedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(returnedBlog))
+      // hide the form again after a blog has been added
+      blogFormRef.current.toggleVisibility()
       notify(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
       return true
     } catch (error) {
@@ -80,6 +85,41 @@ const App = () => {
       return false
     }
   }
+
+  const likeBlog = async (blog) => {
+    // the backend expects the whole blog, with the creator as an id instead of an object
+    const likedBlog = {
+      user: blog.user?.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url,
+    }
+
+    try {
+      const returnedBlog = await blogService.update(blog.id, likedBlog)
+      setBlogs(blogs.map(b => b.id === blog.id ? returnedBlog : b))
+    } catch (error) {
+      notify(error.response?.data?.error || `liking ${blog.title} failed`, 'error')
+    }
+  }
+
+  const removeBlog = async (blog) => {
+    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      return
+    }
+
+    try {
+      await blogService.remove(blog.id)
+      setBlogs(blogs.filter(b => b.id !== blog.id))
+      notify(`removed ${blog.title} by ${blog.author}`)
+    } catch (error) {
+      notify(error.response?.data?.error || `removing ${blog.title} failed`, 'error')
+    }
+  }
+
+  // most liked first; sort() changes the array it is called on, so sort a copy, not the state
+  const blogsByLikes = [...blogs].sort((a, b) => b.likes - a.likes)
 
   if (user === null) {
     return (
@@ -121,10 +161,18 @@ const App = () => {
         {user.name} logged in <button onClick={handleLogout}>logout</button>
       </p>
 
-      <BlogForm createBlog={createBlog} />
+      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+        <BlogForm createBlog={createBlog} />
+      </Togglable>
 
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {blogsByLikes.map(blog =>
+        <Blog
+          key={blog.id}
+          blog={blog}
+          likeBlog={likeBlog}
+          removeBlog={removeBlog}
+          canRemove={blog.user?.username === user.username}
+        />
       )}
     </div>
   )

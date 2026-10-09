@@ -31,6 +31,8 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
+  // answer with the creator's username and name, the same shape as GET /api/blogs
+  await savedBlog.populate('user', { username: 1, name: 1 })
   response.status(201).json(savedBlog)
 })
 
@@ -56,6 +58,7 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 })
 
 // anyone may update a blog, e.g. to like it
+// the creator (user) cannot be changed here, even if the request sends one
 blogsRouter.put('/:id', async (request, response) => {
   const { title, author, url, likes } = request.body || {}
 
@@ -72,6 +75,10 @@ blogsRouter.put('/:id', async (request, response) => {
 
   // save() runs the schema validators, so e.g. an empty title is rejected with 400
   const updatedBlog = await blog.save()
+
+  // answer with the creator's username and name, the same shape as GET /api/blogs,
+  // so the frontend still knows who added the blog after a like
+  await updatedBlog.populate('user', { username: 1, name: 1 })
   response.json(updatedBlog)
 })
 
