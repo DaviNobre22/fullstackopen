@@ -1,14 +1,23 @@
 import { useAnecdoteActions } from '../store'
+import { useNotificationActions } from '../notificationStore'
 
 // an uncontrolled form: the input keeps its own value, which is read when the form is sent
 const AnecdoteForm = () => {
   const { add } = useAnecdoteActions()
+  const { notify } = useNotificationActions()
 
-  const addAnecdote = (event) => {
+  const addAnecdote = async (event) => {
     event.preventDefault()
-    const content = event.target.anecdote.value
-    event.target.anecdote.value = ''
-    add(content)
+    const input = event.target.anecdote
+    const content = input.value
+
+    try {
+      await add(content)
+      input.value = ''
+      notify(`you created '${content}'`)
+    } catch (error) {
+      notify(error.message)
+    }
   }
 
   return (
