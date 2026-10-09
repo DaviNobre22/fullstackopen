@@ -1,4 +1,3 @@
-
 import { create } from 'zustand'
 
 const anecdotesAtStart = [
@@ -18,9 +17,22 @@ const asObject = anecdote => ({
   votes: 0
 })
 
+// the state is never changed in place: each action builds a new array,
+// so Zustand (and React) can see that something changed
 const useAnecdoteStore = create((set) => ({
   anecdotes: anecdotesAtStart.map(asObject),
-  actions: {},
+  actions: {
+    vote: (id) => set((state) => ({
+      anecdotes: state.anecdotes.map((anecdote) =>
+        anecdote.id === id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote
+      ),
+    })),
+    add: (content) => set((state) => ({
+      anecdotes: state.anecdotes.concat(asObject(content)),
+    })),
+  },
 }))
 
 export const useAnecdotes = () => useAnecdoteStore((state) => state.anecdotes)
+// the actions never change, so components that only use them never re-render
+export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
