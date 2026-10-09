@@ -1,0 +1,35 @@
+name: Anecdotes tests check
+
+on:
+  push:
+    branches: [xmain]
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install anecdotes dependencies
+        working-directory: part6/anecdotes
+        run: npm ci
+
+      - name: Verify test files exist
+        working-directory: part6/anecdotes-tests
+        run: node verify-tests-exist.mjs
+
+      - name: Verify tests are not vacuous
+        working-directory: part6/anecdotes-tests
+        run: node verify-tests-not-vacuous.mjs
+
+      - name: Run unit tests
+        working-directory: part6/anecdotes
+        run: npm test
+
+      - name: Verify unit tests fail against a broken store
+        working-directory: part6/anecdotes-tests
+        run: node verify-tests-mutation.mjs
