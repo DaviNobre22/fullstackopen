@@ -1,9 +1,17 @@
+import { useAnecdotes } from '../hooks/useAnecdotes'
+
 const AnecdoteForm = () => {
+  const { addAnecdote } = useAnecdotes()
+
   const onCreate = (event) => {
     event.preventDefault()
-    const content = event.target.anecdote.value
-    event.target.reset()
-    console.log('new anecdote')
+    const form = event.target
+    const content = form.anecdote.value
+
+    // clear the form only when the server has saved the anecdote
+    addAnecdote(content, {
+      onSuccess: () => form.reset(),
+    })
   }
 
   return (
