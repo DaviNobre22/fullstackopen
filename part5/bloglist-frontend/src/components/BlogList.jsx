@@ -1,12 +1,5 @@
 import { Link } from 'react-router-dom'
-
-const blogStyle = {
-  paddingTop: 10,
-  paddingLeft: 2,
-  border: 'solid',
-  borderWidth: 1,
-  marginBottom: 5,
-}
+import { Paper, List, ListItemButton, ListItemText, Typography, Chip } from '@mui/material'
 
 const BlogList = ({ blogs }) => {
   // most liked first; sort() changes the array it is called on, so sort a copy, not the state
@@ -14,14 +7,28 @@ const BlogList = ({ blogs }) => {
 
   return (
     <div>
-      <h2>blogs</h2>
-      {blogsByLikes.map(blog =>
-        <div key={blog.id} style={blogStyle} className="blog">
-          <Link to={`/blogs/${blog.id}`}>
-            {blog.title} {blog.author}
-          </Link>
-        </div>
-      )}
+      <Typography variant="h4" component="h2" gutterBottom>
+        blogs
+      </Typography>
+      <Paper>
+        <List disablePadding>
+          {blogsByLikes.map(blog =>
+            <ListItemButton
+              key={blog.id}
+              component={Link}
+              to={`/blogs/${blog.id}`}
+              className="blog"
+              divider
+            >
+              <ListItemText
+                primary={`${blog.title} ${blog.author}`}
+                slotProps={{ primary: { component: 'span' } }}
+              />
+              <Chip label={`${blog.likes} likes`} size="small" />
+            </ListItemButton>
+          )}
+        </List>
+      </Paper>
     </div>
   )
 }

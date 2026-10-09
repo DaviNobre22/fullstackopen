@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Paper, Stack, TextField, Button, Typography } from '@mui/material'
 
 // the form keeps its own field values; createBlog is called with { title, author, url }
 const BlogForm = ({ createBlog }) => {
@@ -19,42 +20,36 @@ const BlogForm = ({ createBlog }) => {
   }
 
   return (
-    <div>
-      <h2>create new</h2>
+    <Paper sx={{ p: 3, maxWidth: 600 }}>
+      <Typography variant="h5" component="h2" gutterBottom>
+        create new
+      </Typography>
       <form onSubmit={addBlog}>
-        <div>
-          <label>
-            title:
-            <input
-              type="text"
-              value={title}
-              onChange={({ target }) => setTitle(target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            author:
-            <input
-              type="text"
-              value={author}
-              onChange={({ target }) => setAuthor(target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            url:
-            <input
-              type="text"
-              value={url}
-              onChange={({ target }) => setUrl(target.value)}
-            />
-          </label>
-        </div>
-        <button type="submit">create</button>
+        <Stack spacing={2}>
+          <TextField
+            id="title"
+            label="title"
+            value={title}
+            onChange={({ target }) => setTitle(target.value)}
+          />
+          <TextField
+            id="author"
+            label="author"
+            value={author}
+            onChange={({ target }) => setAuthor(target.value)}
+          />
+          <TextField
+            id="url"
+            label="url"
+            value={url}
+            onChange={({ target }) => setUrl(target.value)}
+          />
+          <Button variant="contained" type="submit">
+            create
+          </Button>
+        </Stack>
       </form>
-    </div>
+    </Paper>
   )
 }
 

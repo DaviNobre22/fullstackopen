@@ -11,9 +11,9 @@ describe('<BlogForm />', () => {
 
     render(<BlogForm createBlog={createBlog} />)
 
-    await user.type(screen.getByLabelText('title:'), 'Canonical string reduction')
-    await user.type(screen.getByLabelText('author:'), 'Edsger W. Dijkstra')
-    await user.type(screen.getByLabelText('url:'), 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html')
+    await user.type(screen.getByLabelText('title'), 'Canonical string reduction')
+    await user.type(screen.getByLabelText('author'), 'Edsger W. Dijkstra')
+    await user.type(screen.getByLabelText('url'), 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html')
     await user.click(screen.getByRole('button', { name: 'create' }))
 
     expect(createBlog).toHaveBeenCalledTimes(1)

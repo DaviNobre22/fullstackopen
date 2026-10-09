@@ -8,9 +8,9 @@ const loginWith = async (page, username, password) => {
 // creates a blog through the "create new" view and waits until it is in the list
 const createBlog = async (page, { title, author, url }) => {
   await page.getByRole('link', { name: 'create new' }).click()
-  await page.getByLabel('title:').fill(title)
-  await page.getByLabel('author:').fill(author)
-  await page.getByLabel('url:').fill(url)
+  await page.getByLabel('title').fill(title)
+  await page.getByLabel('author').fill(author)
+  await page.getByLabel('url').fill(url)
   await page.getByRole('button', { name: 'create' }).click()
   await page.getByRole('link', { name: `${title} ${author}` }).waitFor()
 }

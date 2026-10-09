@@ -35,7 +35,8 @@ describe('Blog app', () => {
 
       const errorDiv = page.locator('.error')
       await expect(errorDiv).toContainText('wrong username or password')
-      await expect(errorDiv).toHaveCSS('color', 'rgb(255, 0, 0)')
+      // shown as Material UI's red error alert
+      await expect(errorDiv).toHaveClass(/MuiAlert-colorError/)
 
       await expect(page.getByText('Matti Luukkainen logged in')).not.toBeVisible()
       await expect(page).toHaveURL('/login')

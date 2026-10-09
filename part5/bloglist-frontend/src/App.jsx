@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { Routes, Route, Link, Navigate, useNavigate, useMatch } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate, useMatch } from 'react-router-dom'
+import { Container } from '@mui/material'
+import NavBar from './components/NavBar'
 import BlogList from './components/BlogList'
 import BlogView from './components/BlogView'
 import BlogForm from './components/BlogForm'
@@ -10,16 +12,6 @@ import loginService from './services/login'
 
 // the key under which the logged-in user is kept in the browser's local storage
 const USER_STORAGE_KEY = 'loggedBlogappUser'
-
-const navStyle = {
-  padding: 5,
-  marginBottom: 10,
-  background: 'lightgrey',
-}
-
-const navItemStyle = {
-  paddingRight: 10,
-}
 
 // read synchronously, so a page reload on e.g. /create already knows who is logged in
 const loadSavedUser = () => {
@@ -132,34 +124,29 @@ const App = () => {
   const blog = match ? blogs.find(b => b.id === match.params.id) : null
 
   return (
-    <div>
-      <nav style={navStyle}>
-        <Link style={navItemStyle} to="/">blogs</Link>
-        {user && <Link style={navItemStyle} to="/create">create new</Link>}
-        {user
-          ? <span>{user.name} logged in <button onClick={logout}>logout</button></span>
-          : <Link style={navItemStyle} to="/login">login</Link>
-        }
-      </nav>
+    <>
+      <NavBar user={user} logout={logout} />
 
-      <Notification message={notification.message} type={notification.type} />
+      <Container>
+        <Notification message={notification.message} type={notification.type} />
 
-      <Routes>
-        <Route path="/" element={<BlogList blogs={blogs} />} />
-        <Route
-          path="/blogs/:id"
-          element={<BlogView blog={blog} user={user} likeBlog={likeBlog} removeBlog={removeBlog} />}
-        />
-        <Route
-          path="/create"
-          element={user ? <BlogForm createBlog={createBlog} /> : <Navigate replace to="/login" />}
-        />
-        <Route
-          path="/login"
-          element={user ? <Navigate replace to="/" /> : <LoginForm login={login} />}
-        />
-      </Routes>
-    </div>
+        <Routes>
+          <Route path="/" element={<BlogList blogs={blogs} />} />
+          <Route
+            path="/blogs/:id"
+            element={<BlogView blog={blog} user={user} likeBlog={likeBlog} removeBlog={removeBlog} />}
+          />
+          <Route
+            path="/create"
+            element={user ? <BlogForm createBlog={createBlog} /> : <Navigate replace to="/login" />}
+          />
+          <Route
+            path="/login"
+            element={user ? <Navigate replace to="/" /> : <LoginForm login={login} />}
+          />
+        </Routes>
+      </Container>
+    </>
   )
 }
 
