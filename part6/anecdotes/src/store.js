@@ -21,7 +21,10 @@ const asObject = anecdote => ({
 // so Zustand (and React) can see that something changed
 const useAnecdoteStore = create((set) => ({
   anecdotes: anecdotesAtStart.map(asObject),
+  // the text typed in the filter; an empty filter shows every anecdote
+  filter: '',
   actions: {
+    setFilter: (filter) => set({ filter }),
     vote: (id) => set((state) => ({
       anecdotes: state.anecdotes.map((anecdote) =>
         anecdote.id === id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote
@@ -34,5 +37,6 @@ const useAnecdoteStore = create((set) => ({
 }))
 
 export const useAnecdotes = () => useAnecdoteStore((state) => state.anecdotes)
+export const useFilter = () => useAnecdoteStore((state) => state.filter)
 // the actions never change, so components that only use them never re-render
 export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
